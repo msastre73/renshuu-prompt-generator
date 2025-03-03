@@ -1,4 +1,4 @@
-import { Stack, Stepper, Text } from '@mantine/core';
+import { Stack, Text } from '@mantine/core';
 import { TokenForm } from '../TokenForm';
 import { TokenLocationInfo } from '../TokenLocationInfo';
 

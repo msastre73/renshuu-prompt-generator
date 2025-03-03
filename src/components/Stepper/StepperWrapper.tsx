@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { Stepper, Button, Group, Text } from '@mantine/core';
+import { Stepper} from '@mantine/core';
 import { FirstStepConnect } from './FirstStepConnect';
 
 export function StepperWrapper() {
-    const [active, setActive] = useState(1);
+    const [active, setActive] = useState(0);
 
     const handleStepChange = (nextStep: number) => {
         const isOutOfBounds = nextStep > 3 || nextStep < 0;

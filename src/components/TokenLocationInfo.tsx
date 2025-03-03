@@ -13,7 +13,7 @@ export function TokenLocationInfo() {
             w={400}
             fallbackSrc="https://placehold.co/400x200?text=Top+Left+Menu"
           />
-          <Text size="sm" c="dimmed" mt="md">2. Click on "renshuu API", under "Tools"</Text>
+          <Text size="sm" c="dimmed" mt="md">2. Click on "renshuu API", under "Tools". On desktop, it's located under "Resources".</Text>
           <Image
             src="/images/token-location-2.png"
             alt="renshuu API"

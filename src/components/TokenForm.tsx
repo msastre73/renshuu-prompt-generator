@@ -1,19 +1,25 @@
 import { Button, TextInput, Stack, Text } from '@mantine/core';
 import { useForm } from '@mantine/form';
-
+import { setToken } from '../store/slices/tokenSlice';
+import { useDispatch } from 'react-redux';
+import { renshuuService } from '../services/renshuuService';
 interface TokenFormValues {
   token: string;
 }
 
 export function TokenForm() {
+  const dispatch = useDispatch();
   const form = useForm<TokenFormValues>({
     initialValues: {
       token: '',
     },
   });
 
-  const handleSubmit = (values: TokenFormValues) => {
-    console.log('Token:', values.token);
+  const handleSubmit = async (values: TokenFormValues) => {
+    dispatch(setToken(values.token));
+    const profile = await renshuuService.getProfile(values.token);
+    console.log(profile);
+
   };
 
   return (
