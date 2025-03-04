@@ -5,6 +5,7 @@ import { Shell } from "./layout/Shell";
 import { StepperWrapper } from "./components/Stepper/StepperWrapper";
 import { Provider } from 'react-redux';
 import { store } from './store/store';
+import './globalStyles.css';
 
 export default function App() {
   return (

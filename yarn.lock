@@ -761,6 +761,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tabler/icons-react@npm:^3.30.0":
+  version: 3.30.0
+  resolution: "@tabler/icons-react@npm:3.30.0"
+  dependencies:
+    "@tabler/icons": "npm:3.30.0"
+  peerDependencies:
+    react: ">= 16"
+  checksum: 10c0/21c92de4746fd2dcbb4a691fc9e1ac12a56bfb2d1b3a0994327d5bd994504fd6f8eb6badd754e18a1c6099af5595da380cbcf001c2f86a00084d4b9202999498
+  languageName: node
+  linkType: hard
+
+"@tabler/icons@npm:3.30.0":
+  version: 3.30.0
+  resolution: "@tabler/icons@npm:3.30.0"
+  checksum: 10c0/887122d17f99be75c4a842cdf7af16af2d1abb74e53776f3848d6c05236907ab4d6714a3b4a012437d5e6dbb9d1dd152c97e9311b6a28e079e14bedf742e5192
+  languageName: node
+  linkType: hard
+
 "@types/babel__core@npm:^7.20.5":
   version: 7.20.5
   resolution: "@types/babel__core@npm:7.20.5"
@@ -1112,9 +1130,9 @@ __metadata:
   linkType: hard
 
 "electron-to-chromium@npm:^1.5.73":
-  version: 1.5.111
-  resolution: "electron-to-chromium@npm:1.5.111"
-  checksum: 10c0/656bc6560dd208633a0a01e82109e43e7e3235da76f0df2fc48a42c828918f1ef9833972646ab725d4793f0b6734917b70d8806a0deb39447375d71458cc7a39
+  version: 1.5.112
+  resolution: "electron-to-chromium@npm:1.5.112"
+  checksum: 10c0/fc597268d6d3d7458b55141c436802a6c51078855f021823cdb380b80ad1a69e1c2899fdfc9cffa501d47feb3791ea6a75893fe802a608c7845e979a48f5ac25
   languageName: node
   linkType: hard
 
@@ -2496,9 +2514,9 @@ __metadata:
   linkType: hard
 
 "type-fest@npm:^4.27.0":
-  version: 4.36.0
-  resolution: "type-fest@npm:4.36.0"
-  checksum: 10c0/9257e309a61cfeaec754f45cee4892fe386233daabb3c3e4f990c9ca1a74d44e87166e5cdc12148ba87a350a54a7339b9168dcb478db591be297bf9882cf6634
+  version: 4.37.0
+  resolution: "type-fest@npm:4.37.0"
+  checksum: 10c0/5bad189f66fbe3431e5d36befa08cab6010e56be68b7467530b7ef94c3cf81ef775a8ac3047c8bbda4dd3159929285870357498d7bc1df062714f9c5c3a84926
   languageName: node
   linkType: hard
 
@@ -2647,6 +2665,7 @@ __metadata:
     "@mantine/form": "npm:^7.17.1"
     "@mantine/hooks": "npm:7.17.1"
     "@reduxjs/toolkit": "npm:^2.6.0"
+    "@tabler/icons-react": "npm:^3.30.0"
     "@types/react": "npm:^19.0.7"
     "@types/react-dom": "npm:^19.0.3"
     "@vitejs/plugin-react": "npm:^4.3.4"

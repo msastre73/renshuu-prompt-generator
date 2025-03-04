@@ -3,7 +3,7 @@ import { FirstStepConnect } from './FirstStepConnect';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../store/store';
 import { nextStep, setStep } from '../../store/slices/stepperSlice';
-
+import { SecondStepConfigure } from './SecondStepConfigure';
 export function StepperWrapper() {
     const active = useSelector((state: RootState) => state.stepper.activeStep);
     const dispatch = useDispatch();
@@ -31,11 +31,11 @@ export function StepperWrapper() {
                    <FirstStepConnect />
                 </Stepper.Step>
                 <Stepper.Step
-                    label="Generate a prompt"
+                    label="Generate the prompt"
                     description="Select the prompt options"
                     allowStepSelect={false}
                 >
-                    Step 2 content: Verify email
+                    <SecondStepConfigure />
                 </Stepper.Step>
                 <Stepper.Step
                     label="Done!"
