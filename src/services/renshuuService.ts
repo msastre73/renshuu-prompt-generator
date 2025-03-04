@@ -85,6 +85,38 @@ interface Streaks {
     aconj: StreakStats;
 }
 
+export interface Schedule {
+    id: string;
+    name: string;
+    is_frozen: number;
+    today: {
+        review: number;
+        new: number;
+    };
+    upcoming: Array<{
+        days_in_future: string;
+        terms_to_review: string;
+    }>;
+    terms: {
+        total_count: number;
+        studied_count: number;
+        unstudied_count: number;
+        hidden_count: number;
+    };
+    new_terms: {
+        today_count: string;
+        rolling_week_count: string;
+    };
+}
+
+export interface SchedulesResponse {
+    schedules: Schedule[];
+    api_usage: {
+        calls_today: number;
+        daily_allowance: number;
+    };
+}
+
 export interface RenshuuProfile {
     id: number;
     real_name: string;
@@ -104,6 +136,17 @@ export const renshuuService = {
         try {
             const headers = token ? { Authorization: `Bearer ${token}` } : undefined;
             const response = await api.get<RenshuuProfile>('/profile', { headers });
+            return response.data;
+        } catch {
+            return null;
+        }
+    },
+
+    // Get all schedules
+    getAllSchedules: async (token?: string): Promise<SchedulesResponse | null> => {
+        try {
+            const headers = token ? { Authorization: `Bearer ${token}` } : undefined;
+            const response = await api.get<SchedulesResponse>('/schedule', { headers });
             return response.data;
         } catch {
             return null;
