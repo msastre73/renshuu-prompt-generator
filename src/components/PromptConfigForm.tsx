@@ -1,21 +1,25 @@
-import { Stack, Checkbox, TextInput, Box, Image, Text, Flex, Radio } from '@mantine/core';
+import { Stack, Checkbox, TextInput, Box, Text, Flex, Radio, Button } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { IconArrowRight } from '@tabler/icons-react';
-
-interface PromptConfig {
+import { ScheduleItems } from './ScheduleItems';
+export interface PromptConfig {
     includeFurigana: boolean;
-    excludeScheduledWords: 'none' | 'all' | 'studied';
+    excludeFuriganaWords: 'none' | 'all' | 'studied';
     includeSuperscript: boolean;
     conversationTopic: string;
+    selectedSchedulesIds: string[];
+    selectedWordsStatus: ('studied' | 'notStudied' | 'hidden')[];
 }
 
 export function PromptConfigForm() {
     const form = useForm<PromptConfig>({
         initialValues: {
             includeFurigana: true,
-            excludeScheduledWords: 'studied',
+            excludeFuriganaWords: 'studied',
             includeSuperscript: true,
             conversationTopic: '',
+            selectedSchedulesIds: [],
+            selectedWordsStatus: ['studied'],
         },
     });
 
@@ -25,9 +29,14 @@ export function PromptConfigForm() {
     };
 
     return (
-        <form onSubmit={form.onSubmit(handleSubmit)} style={{ width: '100%', maxWidth: 500 }}>
-            <Stack style={{ border: '1px solid var(--mantine-color-gray-4)', borderRadius: 'var(--mantine-radius-md)' }}
+        <form onSubmit={form.onSubmit(handleSubmit)} style={{ width: '100%', maxWidth: 500, }}>
 
+            <Stack style={{ border: '1px solid var(--mantine-color-gray-4)', borderRadius: 'var(--mantine-radius-md)' }}
+                p="md"
+                mb="md">
+                <ScheduleItems form={form} />
+            </Stack>
+            <Stack style={{ border: '1px solid var(--mantine-color-gray-4)', borderRadius: 'var(--mantine-radius-md)' }}
                 p="md"
                 align="flex-start">
                 <Checkbox
@@ -46,7 +55,7 @@ export function PromptConfigForm() {
                     <Stack ml={40} align="center" >
                         <Radio.Group
                             label="How would you like to handle furigana for vocabulary?"
-                            {...form.getInputProps('excludeScheduledWords')}
+                            {...form.getInputProps('excludeFuriganaWords')}
                         >
                             <Stack mt="xs" gap="xs">
                                 <Radio size='xs' value="none" label="Show furigana for all words" />
@@ -100,11 +109,23 @@ export function PromptConfigForm() {
                 </Box>
 
                 <TextInput
+                    w="100%"
                     label="Conversation Topic (optional)"
+                    description="Leave blank if you want the AI to choose a topic for the conversation"
                     placeholder="Enter a topic for the conversation"
                     {...form.getInputProps('conversationTopic')}
                 />
             </Stack>
+            <Flex justify="flex-end">
+                <Button
+                    type="submit"
+                    mt="md"
+                    color="var(--mantine-color-black)"
+                >
+                    Generate Prompt 🚀
+                </Button>
+            </Flex>
+
         </form>
     );
 }
