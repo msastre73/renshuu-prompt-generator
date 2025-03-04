@@ -1,8 +1,7 @@
 import "@mantine/core/styles.css";
-import { Anchor, Card, List, MantineProvider, Paper, Stack, Text, Title } from "@mantine/core";
+import { Anchor, MantineProvider, Paper, Stack, Text, Title } from "@mantine/core";
 import { theme } from "./theme";
 import { Shell } from "./layout/Shell";
-import { TokenForm } from "./components/TokenForm";
 import { StepperWrapper } from "./components/Stepper/StepperWrapper";
 import { Provider } from 'react-redux';
 import { store } from './store/store';

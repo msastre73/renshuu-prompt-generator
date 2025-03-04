@@ -1,25 +1,28 @@
-import { useState } from 'react';
-import { Stepper} from '@mantine/core';
+import { Stepper } from '@mantine/core';
 import { FirstStepConnect } from './FirstStepConnect';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../../store/store';
+import { nextStep, setStep } from '../../store/slices/stepperSlice';
 
 export function StepperWrapper() {
-    const [active, setActive] = useState(0);
+    const active = useSelector((state: RootState) => state.stepper.activeStep);
+    const dispatch = useDispatch();
 
-    const handleStepChange = (nextStep: number) => {
-        const isOutOfBounds = nextStep > 3 || nextStep < 0;
+    const handleStepChange = (nextStepIndex: number) => {
+        const isOutOfBounds = nextStepIndex > 3 || nextStepIndex < 0;
 
         if (isOutOfBounds) {
             return;
         }
 
-        setActive(nextStep);
+        dispatch(setStep(nextStepIndex));
     };
 
     // Allow the user to freely go back and forth between visited steps.
 
     return (
         <>
-            <Stepper active={active} onStepClick={setActive}>
+            <Stepper active={active} onStepClick={handleStepChange}>
                 <Stepper.Step
                     label="Connect to Renshuu"
                     description="With your API key"

@@ -2,7 +2,7 @@ import { Spoiler, Text, Image, Stack } from '@mantine/core';
 
 export function TokenLocationInfo() {
   return (
-    <Spoiler maxHeight={0} showLabel="Where can I find the API key?" hideLabel="Hide">
+    <Spoiler maxHeight={0} showLabel="Where can I find my API key?" hideLabel="Hide">
       <Stack gap="md">
         <Stack gap="xs">
           <Text size="sm" c="dimmed">1. Open the menu on the top left corner</Text>
