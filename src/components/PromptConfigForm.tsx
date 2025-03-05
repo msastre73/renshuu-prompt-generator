@@ -4,6 +4,9 @@ import { IconArrowRight } from '@tabler/icons-react';
 import { ScheduleItems } from './ScheduleItems';
 import { renshuuService, ProcessedSchedule } from '../services/renshuuService';
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
+import { RootState } from '../store/store';
+import { generatePrompt } from '../business_logic/generatePrompt';
 
 export interface PromptConfig {
     includeFurigana: boolean;
@@ -11,7 +14,7 @@ export interface PromptConfig {
     includeSuperscript: boolean;
     conversationTopic: string;
     selectedSchedulesIds: string[];
-    selectedWordsStatus: ('studied' | 'notStudied' | 'hidden')[];
+    selectedWordsStatus: ('studied' | 'notStudied')[];
     japaneseLevel: 'beginner' | 'n5' | 'n4' | 'n3' | 'n2' | 'n1' | '';
 }
 
@@ -43,6 +46,10 @@ export function PromptConfigForm() {
     // Add loading state
     const [isLoading, setIsLoading] = useState(false);
 
+    // get user data from store
+    const userLevelProgress = useSelector((state: RootState) => state.user.levelProgress);
+    console.log('userLevelProgress', userLevelProgress);
+
     const handleSubmit = async (values: PromptConfig) => {
         setIsLoading(true);
         try {
@@ -59,7 +66,21 @@ export function PromptConfigForm() {
             console.log('Form values:', values);
             console.log('All schedule words:', allScheduleWords);
 
+            if (!userLevelProgress) {
+                throw new Error('User level progress is not available');
+            }
 
+            const prompt = generatePrompt(
+                values.japaneseLevel,
+                userLevelProgress,
+                allScheduleWords,
+                values.conversationTopic,
+                values.includeFurigana,
+                values.excludeFuriganaWords,
+                values.includeSuperscript,
+                values.selectedWordsStatus);
+                
+            console.log('Prompt:', prompt);
         } catch (error) {
             console.error('Error fetching schedule words:', error);
             // You might want to add error handling UI here

@@ -1,15 +1,17 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-type JLPTLevel = 'n1' | 'n2' | 'n3' | 'n4' | 'n5';
+export type JLPTLevel = 'N1' | 'N2' | 'N3' | 'N4' | 'N5';
 
-type LevelCounts = {
-    [key in JLPTLevel]: number;
+
+
+export type Category = 'kanji' | 'sentences' | 'vocabulary' | 'grammar';
+
+export type CategoryProgress = {
+    [key in Category]: number;
 };
 
-type Category = 'kanji' | 'sentences' | 'vocabulary' | 'grammar';
-
-type LevelProgress = {
-    [key in Category]: LevelCounts;
+export type LevelProgress = {
+    [key in JLPTLevel]: CategoryProgress;
 };
 
 interface UserState {
