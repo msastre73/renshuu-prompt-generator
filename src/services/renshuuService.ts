@@ -128,6 +128,52 @@ export interface RenshuuProfile {
     streaks: Streaks;
 }
 
+interface ScheduleTerm {
+    kanji_full: string;
+    hiragana_full: string;
+    id: string;
+    user_data?: {
+        mastery_avg_perc: number;
+        correct_count: number;
+        missed_count: number;
+    };
+}
+
+interface ScheduleListResponse {
+    schedules: [{
+        name: string;
+    }];
+    contents: {
+        pg: number;
+        total_pg: number;
+        terms: ScheduleTerm[];
+    };
+    api_usage: {
+        calls_today: number;
+        daily_allowance: number;
+    };
+}
+
+export interface ProcessedSchedule {
+    [scheduleId: string]: {
+        name: string;
+        words: {
+            studied: {
+                kanji: string;
+                reading: string;
+                id: string;
+                mastery: number;
+                encountered_count: number;
+            }[];
+            not_studied: {
+                kanji: string;
+                reading: string;
+                id: string;
+            }[];
+        };
+    };
+}
+
 // API methods
 export const renshuuService = {
     // Get user profile
@@ -149,6 +195,79 @@ export const renshuuService = {
             const response = await api.get<SchedulesResponse>('/schedule', { headers });
             return response.data;
         } catch {
+            return null;
+        }
+    },
+
+    getAllScheduleWords: async (scheduleId: string, token?: string): Promise<ProcessedSchedule | null> => {
+        try {
+            const headers = token ? { Authorization: `Bearer ${token}` } : undefined;
+            let currentPage = 1;
+            let allTerms: ScheduleTerm[] = [];
+            let scheduleName = '';
+
+            // Get first page to get total pages and schedule name
+            const firstResponse = await api.get<ScheduleListResponse>(
+                `/schedule/${scheduleId}/list`,
+                { 
+                    headers,
+                    params: { pg: 1 }
+                }
+            );
+
+            console.log('First response:', firstResponse.data);
+
+            
+            scheduleName = firstResponse.data.schedules[0].name; // ?? Will it always be the first schedule?
+            const totalPages = firstResponse.data.contents.total_pg;
+            allTerms = [...firstResponse.data.contents.terms];
+
+            // Fetch remaining pages
+            while (currentPage < totalPages) {
+                currentPage++;
+                const response = await api.get<ScheduleListResponse>(
+                    `/schedule/${scheduleId}/list`,
+                    {
+                        headers,
+                        params: { pg: currentPage }
+                    }
+                );
+                console.log('Response of page ', currentPage, ':', response.data);
+                allTerms = [...allTerms, ...response.data.contents.terms];
+            }
+
+            // Group terms by studied status
+            const studiedWords = allTerms
+                .filter(term => term.user_data)
+                .map(term => ({
+                    kanji: term.kanji_full,
+                    reading: term.hiragana_full,
+                    id: term.id,
+                    mastery: term.user_data!.mastery_avg_perc,
+                    encountered_count: term.user_data!.correct_count + term.user_data!.missed_count
+                }));
+
+            const notStudiedWords = allTerms
+                .filter(term => !term.user_data)
+                .map(term => ({
+                    kanji: term.kanji_full,
+                    reading: term.hiragana_full,
+                    id: term.id
+                }));
+
+            const processedData: ProcessedSchedule = {
+                [scheduleId]: {
+                    name: scheduleName,
+                    words: {
+                        studied: studiedWords,
+                        not_studied: notStudiedWords
+                    }
+                }
+            };
+
+            return processedData;
+        } catch (error) {
+            console.error('Error fetching all schedule words:', error);
             return null;
         }
     },

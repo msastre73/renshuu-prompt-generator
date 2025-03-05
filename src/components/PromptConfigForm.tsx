@@ -1,7 +1,10 @@
-import { Stack, Checkbox, TextInput, Box, Text, Flex, Radio, Button } from '@mantine/core';
+import { Stack, Checkbox, TextInput, Box, Text, Flex, Radio, Button, Select } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { IconArrowRight } from '@tabler/icons-react';
 import { ScheduleItems } from './ScheduleItems';
+import { renshuuService, ProcessedSchedule } from '../services/renshuuService';
+import { useState } from 'react';
+
 export interface PromptConfig {
     includeFurigana: boolean;
     excludeFuriganaWords: 'none' | 'all' | 'studied';
@@ -9,6 +12,7 @@ export interface PromptConfig {
     conversationTopic: string;
     selectedSchedulesIds: string[];
     selectedWordsStatus: ('studied' | 'notStudied' | 'hidden')[];
+    japaneseLevel: 'beginner' | 'n5' | 'n4' | 'n3' | 'n2' | 'n1' | '';
 }
 
 export function PromptConfigForm() {
@@ -20,13 +24,58 @@ export function PromptConfigForm() {
             conversationTopic: '',
             selectedSchedulesIds: [],
             selectedWordsStatus: ['studied'],
+            japaneseLevel: '',
+        },
+        validate: {
+            japaneseLevel: (value) => {
+                if (!value) {
+                    return 'Please select a Japanese level';
+                }
+            },
+            selectedSchedulesIds: (value) => {
+                if (!value || value.length === 0) {
+                    return 'Please select at least one schedule';
+                }
+            },
         },
     });
 
+    // Add loading state
+    const [isLoading, setIsLoading] = useState(false);
+
     const handleSubmit = async (values: PromptConfig) => {
-        // Handle the form submission here
-        console.log(values);
+        setIsLoading(true);
+        try {
+            const allScheduleWords: ProcessedSchedule[] = [];
+
+            // Fetch words for each selected schedule
+            for (const scheduleId of values.selectedSchedulesIds) {
+                const scheduleWords = await renshuuService.getAllScheduleWords(scheduleId);
+                if (scheduleWords) {
+                    allScheduleWords.push(scheduleWords);
+                }
+            }
+
+            console.log('Form values:', values);
+            console.log('All schedule words:', allScheduleWords);
+
+
+        } catch (error) {
+            console.error('Error fetching schedule words:', error);
+            // You might want to add error handling UI here
+        } finally {
+            setIsLoading(false);
+        }
     };
+
+    const japaneseLevelOptions = [
+        { value: 'beginner', label: 'Total Beginner' },
+        { value: 'n5', label: 'JLPT N5' },
+        { value: 'n4', label: 'JLPT N4' },
+        { value: 'n3', label: 'JLPT N3' },
+        { value: 'n2', label: 'JLPT N2' },
+        { value: 'n1', label: 'JLPT N1' },
+    ];
 
     return (
         <form onSubmit={form.onSubmit(handleSubmit)} style={{ width: '100%', maxWidth: 500, }}>
@@ -115,11 +164,19 @@ export function PromptConfigForm() {
                     placeholder="Enter a topic for the conversation"
                     {...form.getInputProps('conversationTopic')}
                 />
+                <Select
+                    label="Japanese Level"
+                    placeholder="Select your Japanese level"
+                    data={japaneseLevelOptions}
+                    {...form.getInputProps('japaneseLevel')}
+                    required
+                />
             </Stack>
             <Flex justify="flex-end">
                 <Button
                     type="submit"
                     mt="md"
+                    loading={isLoading}
                     color="var(--mantine-color-black)"
                 >
                     Generate Prompt 🚀

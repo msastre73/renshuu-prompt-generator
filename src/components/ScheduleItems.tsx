@@ -1,7 +1,7 @@
 import { Box, Text, Chip, Button, Group, Stack, TextInput, Badge, CloseButton, Pagination } from '@mantine/core';
 import { UseFormReturnType } from '@mantine/form';
 import { IconSearch, IconPlus } from '@tabler/icons-react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { PromptConfig } from './PromptConfigForm';
 import { useSelector } from 'react-redux';
 import { selectSchedules } from '../store/slices/schedulesSlice';
@@ -12,6 +12,7 @@ interface ScheduleItemsProps {
 
 export function ScheduleItems({ form }: ScheduleItemsProps) {
     const [search, setSearch] = useState('');
+    const searchInputRef = useRef<HTMLInputElement>(null);
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 3;
     const schedules = useSelector(selectSchedules);
@@ -20,16 +21,19 @@ export function ScheduleItems({ form }: ScheduleItemsProps) {
         form.values.selectedSchedulesIds.includes(s.id)
     );
     const availableSchedules = search.trim() === ''
-        ? schedules.filter(s => !form.values.selectedSchedulesIds.includes(s.id))
+        ? schedules.filter(s => 
+            !form.values.selectedSchedulesIds.includes(s.id) && 
+            (s.termCounts.studied + s.termCounts.unstudied + s.termCounts.hidden) > 0)
         : schedules.filter(s =>
             !form.values.selectedSchedulesIds.includes(s.id) &&
-            s.name.toLowerCase().includes(search.toLowerCase().trim())
+            s.name.toLowerCase().includes(search.toLowerCase().trim()) &&
+            (s.termCounts.studied + s.termCounts.unstudied + s.termCounts.hidden) > 0
         );
 
     const totalWords = selectedSchedules.reduce((acc, schedule) => {
         const counts = schedule.termCounts;
         return acc + form.values.selectedWordsStatus.reduce((sum, status) =>
-            sum + (status === 'notStudied' ? counts.unstudied : counts[status]), 0);
+            sum + (status === 'notStudied' ? counts.unstudied : (counts.studied + counts.hidden)), 0);
     }, 0);
 
     const totalPages = Math.ceil(availableSchedules.length / itemsPerPage);
@@ -42,6 +46,12 @@ export function ScheduleItems({ form }: ScheduleItemsProps) {
     useEffect(() => {
         setCurrentPage(1);
     }, [search]);
+
+    useEffect(() => {
+        if (form.errors.selectedSchedulesIds && searchInputRef.current) {
+            searchInputRef.current.focus();
+        }
+    }, [form.errors.selectedSchedulesIds]);
 
     return (
         <Stack gap="xs">
@@ -56,47 +66,55 @@ export function ScheduleItems({ form }: ScheduleItemsProps) {
                 value={form.values.selectedWordsStatus}
                 onChange={(value) => {
                     if (value.length > 0) {
-                        form.setFieldValue('selectedWordsStatus', value as ('studied' | 'notStudied' | 'hidden')[]);
+                        form.setFieldValue('selectedWordsStatus', value as ('studied' | 'notStudied')[]);
                     }
                 }}
             >
                 <Group gap="xs">
                     <Chip size="xs" value="studied">Studied</Chip>
                     <Chip size="xs" value="notStudied">Not Studied</Chip>
-                    <Chip size="xs" value="hidden">Hidden</Chip>
                 </Group>
             </Chip.Group>
 
             <Text size="xs" fw={500} mt="sm">Selected schedules</Text>
             <Text size="xs" c="dimmed">Total items: {totalWords}</Text>
 
-            <Group gap="xs">
-                {selectedSchedules.map(schedule => (
-                    <Badge
-                        key={schedule.id}
-                        variant="light"
-                        rightSection={
-                            <CloseButton
-                                size="xs"
-                                onClick={() => {
-                                    form.setFieldValue('selectedSchedulesIds',
-                                        form.values.selectedSchedulesIds.filter(id => id !== schedule.id)
-                                    );
-                                }}
-                            />
-                        }
-                    >
-                        {schedule.name} +{
-                            form.values.selectedWordsStatus.reduce((sum, status) =>
-                                sum + (status === 'notStudied' ? schedule.termCounts.unstudied : schedule.termCounts[status]), 0
-                            )
-                        }
-                    </Badge>
-                ))}
-            </Group>
+            <Box>
+                <Group gap="xs">
+                    {selectedSchedules.map(schedule => (
+                        <Badge
+                            key={schedule.id}
+                            variant="light"
+                            rightSection={
+                                <CloseButton
+                                    size="xs"
+                                    onClick={() => {
+                                        form.setFieldValue('selectedSchedulesIds',
+                                            form.values.selectedSchedulesIds.filter(id => id !== schedule.id)
+                                        );
+                                    }}
+                                />
+                            }
+                        >
+                            {schedule.name} +{
+                                form.values.selectedWordsStatus.reduce((sum, status) =>
+                                    sum + (status === 'notStudied' ? schedule.termCounts.unstudied : 
+                                        (schedule.termCounts.studied + schedule.termCounts.hidden)), 0
+                                )
+                            }
+                        </Badge>
+                    ))}
+                </Group>
+                {form.errors.selectedSchedulesIds && (
+                    <Text size="xs" c="red" mt={4}>
+                        {form.errors.selectedSchedulesIds}
+                    </Text>
+                )}
+            </Box>
 
             <Box mt="xs">
                 <TextInput
+                    ref={searchInputRef}
                     size="xs"
                     placeholder="Search schedules..."
                     leftSection={<IconSearch size={14} />}
@@ -122,12 +140,10 @@ export function ScheduleItems({ form }: ScheduleItemsProps) {
                             }}
                         >
                             <Box style={{ flex: 1, minWidth: 0 }}>
-                                <Text size="sm" fw={700} truncate>{schedule.name}</Text>
+                                <Text size="sm" fw={700} truncate>{schedule.name} ({schedule.termCounts.studied + schedule.termCounts.unstudied + schedule.termCounts.hidden})</Text>
                                 <Text size="xs" c="dimmed">
-                                    Total: {schedule.termCounts.studied + schedule.termCounts.unstudied + schedule.termCounts.hidden} |
-                                    Studied: {schedule.termCounts.studied} |
-                                    Not Studied: {schedule.termCounts.unstudied} |
-                                    Hidden: {schedule.termCounts.hidden}
+                                    Studied: {schedule.termCounts.studied + schedule.termCounts.hidden} |
+                                    Not Studied: {schedule.termCounts.unstudied}
                                 </Text>
                             </Box>
                             <Button
