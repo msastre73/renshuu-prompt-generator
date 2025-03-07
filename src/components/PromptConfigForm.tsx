@@ -16,9 +16,10 @@ export interface PromptConfig {
 interface PromptConfigFormProps {
     onSubmit: (values: PromptConfig) => Promise<void>;
     isLoading: boolean;
+    isPromptError: boolean;
 }
 
-export function PromptConfigForm({ onSubmit, isLoading }: PromptConfigFormProps) {
+export function PromptConfigForm({ onSubmit, isLoading, isPromptError }: PromptConfigFormProps) {
     const form = useForm<PromptConfig>({
         initialValues: {
             includeFurigana: true,
@@ -142,6 +143,8 @@ export function PromptConfigForm({ onSubmit, isLoading }: PromptConfigFormProps)
                     Generate Prompt 🚀
                 </Button>
             </Flex>
+            {isPromptError && <Text c="red">Error generating prompt. Please refresh the page and try again.</Text>}
+
 
         </form>
     );

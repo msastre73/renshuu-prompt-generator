@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-
+import { PromptConfig } from '../../components/PromptConfigForm';
 export type JLPTLevel = 'N1' | 'N2' | 'N3' | 'N4' | 'N5';
 
 
@@ -19,7 +19,9 @@ interface UserState {
     kaoPic: string | null;
     userLevel: number | null;
     levelProgress: LevelProgress | null;
-    lastPromptConfig: Record<string, unknown>;
+    lastPromptConfig: PromptConfig | null;
+    fullPrompt: string | null;
+    gptPrompt: string | null;
 }
 
 const initialState: UserState = {
@@ -27,7 +29,9 @@ const initialState: UserState = {
     kaoPic: null,
     userLevel: null,
     levelProgress: null,
-    lastPromptConfig: {},
+    lastPromptConfig: null,
+    fullPrompt: null,
+    gptPrompt: null,
 };
 
 export const userSlice = createSlice({
@@ -45,19 +49,33 @@ export const userSlice = createSlice({
             state.userLevel = action.payload.userLevel;
             state.levelProgress = action.payload.levelProgress;
         },
-        setLastPromptConfig: (state, action: PayloadAction<Record<string, unknown>>) => {
+        setLastPromptConfig: (state, action: PayloadAction<PromptConfig>) => {
             state.lastPromptConfig = action.payload;
+        },
+        setFullPrompt: (state, action: PayloadAction<string>) => {
+            state.fullPrompt = action.payload;
+        },
+        setGptPrompt: (state, action: PayloadAction<string>) => {
+            state.gptPrompt = action.payload;
         },
         clearUserData: (state) => {
             state.name = null;
             state.kaoPic = null;
             state.userLevel = null;
             state.levelProgress = null;
-            state.lastPromptConfig = {};
+            state.lastPromptConfig = null;
+            state.fullPrompt = null;
+            state.gptPrompt = null;
         },
     },
 });
 
-export const { setUserData, setLastPromptConfig, clearUserData } = userSlice.actions;
+export const { 
+    setUserData, 
+    setLastPromptConfig, 
+    setFullPrompt,
+    setGptPrompt,
+    clearUserData 
+} = userSlice.actions;
 
 export default userSlice.reducer; 

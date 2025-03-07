@@ -7,6 +7,9 @@ import { renshuuService, ProcessedSchedule } from '../../services/renshuuService
 import { selectSchedules, setSchedules, ScheduleInfo } from '../../store/slices/schedulesSlice';
 import { PromptConfig, PromptConfigForm } from '../PromptConfigForm';
 import { generatePrompt } from '../../business_logic/generatePrompt';
+import { setGptPrompt, setLastPromptConfig } from '../../store/slices/userSlice';
+import { setFullPrompt } from '../../store/slices/userSlice';
+import { setStep } from '../../store/slices/stepperSlice';
 
 export function SecondStepConfigure() {
     const { name, kaoPic, userLevel } = useSelector((state: RootState) => state.user);
@@ -15,6 +18,7 @@ export function SecondStepConfigure() {
     const schedules = useSelector(selectSchedules);
     const dispatch = useDispatch();
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isPromptError, setIsPromptError] = useState(false);
     const userLevelProgress = useSelector((state: RootState) => state.user.levelProgress);
 
     useEffect(() => {
@@ -43,6 +47,8 @@ export function SecondStepConfigure() {
         loadSchedules();
     }, [dispatch]);
 
+
+    // GENERATE PROMPT
     const handleSubmit = async (values: PromptConfig) => {
         setIsSubmitting(true);
         try {
@@ -55,9 +61,6 @@ export function SecondStepConfigure() {
                     allScheduleWords.push(scheduleWords);
                 }
             }
-
-            console.log('Form values:', values);
-            console.log('All schedule words:', allScheduleWords);
 
             if (!userLevelProgress) {
                 throw new Error('User level progress is not available');
@@ -72,12 +75,15 @@ export function SecondStepConfigure() {
                 values.includeSuperscript,
                 values.selectedWordsStatus
             );
-                
-            console.log('Full prompt:', prompt.fullPrompt);
-            console.log('Gpt prompt:', prompt.gptPrompt);
+            dispatch(setFullPrompt(prompt.fullPrompt));
+            dispatch(setGptPrompt(prompt.gptPrompt));
+            dispatch(setLastPromptConfig(values));
+            dispatch(setStep(3));
+
         } catch (error) {
             console.error('Error fetching schedule words:', error);
-            // Handle error here
+            setIsPromptError(true);
+
         } finally {
             setIsSubmitting(false);
         }
@@ -125,6 +131,7 @@ export function SecondStepConfigure() {
                 <PromptConfigForm 
                     onSubmit={handleSubmit}
                     isLoading={isSubmitting}
+                    isPromptError={isPromptError}
                 />
             )}
         </Stack>
