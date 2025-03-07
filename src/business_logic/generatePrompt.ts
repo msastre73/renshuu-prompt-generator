@@ -55,34 +55,24 @@ export function generatePrompt(
     allProcessedSchedules: ProcessedSchedule[],
     conversationTopic: string,
     includeFurigana: boolean,
-    excludeFuriganaWords: 'none' | 'all' | 'studied',
     includeSuperscript: boolean,
     selectedWordsStatus: ('studied' | 'notStudied')[],
 ) {
 
     let furiganaPart = "";
     if (includeFurigana) {
-        console.log("excludeFuriganaWords ----", excludeFuriganaWords);
-        let furiganaExclusson = "for all the KANJI";
-        if (excludeFuriganaWords == "all") {
-            furiganaExclusson = "for KANJI OUTSIDE my list (i.e any KANJI on my list, studied or not, should NOT have furigana)"
-        } else if (excludeFuriganaWords == "studied") {
-            furiganaExclusson = "for all the KANJI I have NOT studied (i.e any KANJI on my list, that is marked as studied, should NOT have furigana)"
-        }
-        furiganaPart = formatTemplate(promptTemplates.furigana, { limits: furiganaExclusson })
+        furiganaPart = promptTemplates.furigana;
     }
 
     let superscriptPart = "";
     if (includeSuperscript) {
         let openLine = "";
-        let furiganaClarification = "";
         let exampleLine = promptTemplates.superscriptNotFuriganaExample;
         if (includeFurigana) {
             openLine = "Also, ";
-            furiganaClarification = "(after the furigana)";
             exampleLine = promptTemplates.superscriptFuriganaExample;
         }
-        superscriptPart = formatTemplate(promptTemplates.superscript, { open: openLine, furigana_clarification: furiganaClarification, example: exampleLine })
+        superscriptPart = formatTemplate(promptTemplates.superscript, { open: openLine, example: exampleLine })
     }
 
     const termsPart = formatTermsList(allProcessedSchedules, selectedWordsStatus);
@@ -103,6 +93,18 @@ export function generatePrompt(
         topic: conversationTopicPart
     })
 
-    return prompt;
+    const gptPrompt = formatTemplate(promptTemplates.gptPrompt, {
+        userLevel: userLevelPart,
+        levelProgress: levelPart,
+        terms: termsPart,
+        furigana: includeFurigana ? "YES" : "NO",
+        superscript: includeSuperscript ? "YES" : "NO",
+        topic: conversationTopic == "" ? promptTemplates.topicDefault : conversationTopic
+    })
+
+    return {
+        fullPrompt: prompt,
+        gptPrompt: gptPrompt
+    };
 
 }

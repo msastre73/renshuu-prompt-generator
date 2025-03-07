@@ -1,4 +1,4 @@
-import { Stack, Checkbox, TextInput, Box, Text, Flex, Radio, Button, Select } from '@mantine/core';
+import { Stack, Checkbox, TextInput, Box, Text, Flex, Button, Select } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { IconArrowRight } from '@tabler/icons-react';
 import { ScheduleItems } from './ScheduleItems';
@@ -10,7 +10,6 @@ import { generatePrompt } from '../business_logic/generatePrompt';
 
 export interface PromptConfig {
     includeFurigana: boolean;
-    excludeFuriganaWords: 'none' | 'all' | 'studied';
     includeSuperscript: boolean;
     conversationTopic: string;
     selectedSchedulesIds: string[];
@@ -22,7 +21,6 @@ export function PromptConfigForm() {
     const form = useForm<PromptConfig>({
         initialValues: {
             includeFurigana: true,
-            excludeFuriganaWords: 'studied',
             includeSuperscript: true,
             conversationTopic: '',
             selectedSchedulesIds: [],
@@ -76,7 +74,6 @@ export function PromptConfigForm() {
                 allScheduleWords,
                 values.conversationTopic,
                 values.includeFurigana,
-                values.excludeFuriganaWords,
                 values.includeSuperscript,
                 values.selectedWordsStatus);
                 
@@ -111,7 +108,7 @@ export function PromptConfigForm() {
                 align="flex-start">
                 <Checkbox
                     mb={0}
-                    label="Include furigana between '<>'"
+                    label="Include furigana between parentheses"
                     description="Furigana are the small kana characters that appear above kanji characters representing their pronunciation.
                     Most AI Chats can't handle furigana, so this option is a workaround."
                     {...form.getInputProps('includeFurigana', { type: 'checkbox' })}
@@ -119,22 +116,8 @@ export function PromptConfigForm() {
                 <Flex gap="xs" align="center" justify="center" w="100%">
                     <Text > <ruby> 漢字<rt>かんじ</rt></ruby>  </Text>
                     <IconArrowRight />
-                    <Text > {" 漢字<かんじ>"} </Text>
-                </Flex>
-                {form.values.includeFurigana && (
-                    <Stack ml={40} align="center" >
-                        <Radio.Group
-                            label="How would you like to handle furigana for vocabulary?"
-                            {...form.getInputProps('excludeFuriganaWords')}
-                        >
-                            <Stack mt="xs" gap="xs">
-                                <Radio size='xs' value="none" label="Show furigana for all words" />
-                                <Radio size='xs' value="all" label="Hide furigana for all words in selected schedules" />
-                                <Radio size='xs' value="studied" label="Hide furigana only for words you've already studied in selected schedules" />
-                            </Stack>
-                        </Radio.Group>
-                    </Stack>
-                )}
+                    <Text > {" 漢字(かんじ)"} </Text>
+                </Flex>        
                 <Checkbox
                     label="Include superscript to get the meaning of words"
                     description="There is no 'click to get the definition' button in AI Chats. But we can instruct the AI to add a small number after 
