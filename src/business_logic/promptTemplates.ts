@@ -60,10 +60,10 @@ Please add the reading between parentheses right after the word, we consider oku
 
 const superscript = `
 == Superscript ==
-{{open}}I'd like be able to get the meaning of any word you use in the conversation.
-To achieve this, please add numeric superscripts at the for all words  and particles.
-Then if I only reply with the number, you should be able to give me the meaning of the word for the case you use it.
-Also, if the word is in one of the list, please remind me in which schedule was it (include the available information).
+{{open}}The user would like to be able to get the meaning of any word used in the conversation.
+To achieve this, please add numeric superscripts at the end for all words and particles.
+Then if they only reply with the number, you should be able to give them the meaning of the word for the case you use it.
+Also, if the word is in one of the lists, please remind them in which schedule it was (include the available information).
 -- GENERIC EXAMPLE START --
 ASSISTANT: {{example}}
 USER: 3

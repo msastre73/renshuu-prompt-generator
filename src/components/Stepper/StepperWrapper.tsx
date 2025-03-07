@@ -1,28 +1,18 @@
 import { Stepper } from '@mantine/core';
 import { FirstStepConnect } from './FirstStepConnect';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { RootState } from '../../store/store';
-import { nextStep, setStep } from '../../store/slices/stepperSlice';
 import { SecondStepConfigure } from './SecondStepConfigure';
+import { ThirdStepDone } from './ThirdStepDone';
+
 export function StepperWrapper() {
     const active = useSelector((state: RootState) => state.stepper.activeStep);
-    const dispatch = useDispatch();
 
-    const handleStepChange = (nextStepIndex: number) => {
-        const isOutOfBounds = nextStepIndex > 3 || nextStepIndex < 0;
 
-        if (isOutOfBounds) {
-            return;
-        }
-
-        dispatch(setStep(nextStepIndex));
-    };
-
-    // Allow the user to freely go back and forth between visited steps.
 
     return (
         <>
-            <Stepper active={active} onStepClick={handleStepChange}>
+            <Stepper active={active}>
                 <Stepper.Step
                     label="Connect to Renshuu"
                     description="With your API key"
@@ -31,22 +21,22 @@ export function StepperWrapper() {
                    <FirstStepConnect />
                 </Stepper.Step>
                 <Stepper.Step
-                    label="Generate the prompt"
-                    description="Select the prompt options"
+                    label="Configure prompt"
+                    description="Select schedules and options"
                     allowStepSelect={false}
                 >
                     <SecondStepConfigure />
                 </Stepper.Step>
                 <Stepper.Step
                     label="Done!"
-                    description="Copy the prompt"
+                    description="The prompt is ready"
                     allowStepSelect={false}
                 >
-                    Step 3 content: Get full access
+                    Prompt Generated {/* NOTE: This should never be reached */}
                 </Stepper.Step>
 
                 <Stepper.Completed>
-                    Completed, click back button to get to previous step
+                    <ThirdStepDone />
                 </Stepper.Completed>
             </Stepper>
 

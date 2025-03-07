@@ -75,10 +75,14 @@ export function SecondStepConfigure() {
                 values.includeSuperscript,
                 values.selectedWordsStatus
             );
+            // Copy gpt prompt to clipboard
+            navigator.clipboard.writeText(prompt.gptPrompt || '');
             dispatch(setFullPrompt(prompt.fullPrompt));
             dispatch(setGptPrompt(prompt.gptPrompt));
             dispatch(setLastPromptConfig(values));
             dispatch(setStep(3));
+            // Scroll to top
+            window.scrollTo(0, 0);
 
         } catch (error) {
             console.error('Error fetching schedule words:', error);
