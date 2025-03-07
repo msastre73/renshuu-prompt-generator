@@ -3,15 +3,19 @@ import { IconCheck } from '@tabler/icons-react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../store/store';
 import { useEffect, useState } from 'react';
-import { renshuuService } from '../../services/renshuuService';
+import { renshuuService, ProcessedSchedule } from '../../services/renshuuService';
 import { selectSchedules, setSchedules, ScheduleInfo } from '../../store/slices/schedulesSlice';
-import { PromptConfigForm } from '../PromptConfigForm';
+import { PromptConfig, PromptConfigForm } from '../PromptConfigForm';
+import { generatePrompt } from '../../business_logic/generatePrompt';
+
 export function SecondStepConfigure() {
     const { name, kaoPic, userLevel } = useSelector((state: RootState) => state.user);
     const [isLoadingSchedules, setIsLoadingSchedules] = useState(false);
     const [schedulesError, setSchedulesError] = useState<string | null>(null);
     const schedules = useSelector(selectSchedules);
     const dispatch = useDispatch();
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const userLevelProgress = useSelector((state: RootState) => state.user.levelProgress);
 
     useEffect(() => {
         const loadSchedules = async () => {
@@ -38,6 +42,46 @@ export function SecondStepConfigure() {
 
         loadSchedules();
     }, [dispatch]);
+
+    const handleSubmit = async (values: PromptConfig) => {
+        setIsSubmitting(true);
+        try {
+            const allScheduleWords: ProcessedSchedule[] = [];
+
+            // Fetch words for each selected schedule
+            for (const scheduleId of values.selectedSchedulesIds) {
+                const scheduleWords = await renshuuService.getAllScheduleWords(scheduleId);
+                if (scheduleWords) {
+                    allScheduleWords.push(scheduleWords);
+                }
+            }
+
+            console.log('Form values:', values);
+            console.log('All schedule words:', allScheduleWords);
+
+            if (!userLevelProgress) {
+                throw new Error('User level progress is not available');
+            }
+
+            const prompt = generatePrompt(
+                values.japaneseLevel,
+                userLevelProgress,
+                allScheduleWords,
+                values.conversationTopic,
+                values.includeFurigana,
+                values.includeSuperscript,
+                values.selectedWordsStatus
+            );
+                
+            console.log('Full prompt:', prompt.fullPrompt);
+            console.log('Gpt prompt:', prompt.gptPrompt);
+        } catch (error) {
+            console.error('Error fetching schedule words:', error);
+            // Handle error here
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
 
     return (
         <Stack mt="xl" align="center" justify="center" >
@@ -78,7 +122,10 @@ export function SecondStepConfigure() {
                     No schedules found. <Anchor target="_blank" href="https://www.renshuu.org/">Add some in your Renshuu account.</Anchor>
                 </Text>
             ) : (
-                <PromptConfigForm />
+                <PromptConfigForm 
+                    onSubmit={handleSubmit}
+                    isLoading={isSubmitting}
+                />
             )}
         </Stack>
     );

@@ -2,11 +2,6 @@ import { Stack, Checkbox, TextInput, Box, Text, Flex, Button, Select } from '@ma
 import { useForm } from '@mantine/form';
 import { IconArrowRight } from '@tabler/icons-react';
 import { ScheduleItems } from './ScheduleItems';
-import { renshuuService, ProcessedSchedule } from '../services/renshuuService';
-import { useState } from 'react';
-import { useSelector } from 'react-redux';
-import { RootState } from '../store/store';
-import { generatePrompt } from '../business_logic/generatePrompt';
 
 export interface PromptConfig {
     includeFurigana: boolean;
@@ -17,7 +12,13 @@ export interface PromptConfig {
     japaneseLevel: 'beginner' | 'n5' | 'n4' | 'n3' | 'n2' | 'n1' | '';
 }
 
-export function PromptConfigForm() {
+// Add these props to the component
+interface PromptConfigFormProps {
+    onSubmit: (values: PromptConfig) => Promise<void>;
+    isLoading: boolean;
+}
+
+export function PromptConfigForm({ onSubmit, isLoading }: PromptConfigFormProps) {
     const form = useForm<PromptConfig>({
         initialValues: {
             includeFurigana: true,
@@ -41,51 +42,6 @@ export function PromptConfigForm() {
         },
     });
 
-    // Add loading state
-    const [isLoading, setIsLoading] = useState(false);
-
-    // get user data from store
-    const userLevelProgress = useSelector((state: RootState) => state.user.levelProgress);
-    console.log('userLevelProgress', userLevelProgress);
-
-    const handleSubmit = async (values: PromptConfig) => {
-        setIsLoading(true);
-        try {
-            const allScheduleWords: ProcessedSchedule[] = [];
-
-            // Fetch words for each selected schedule
-            for (const scheduleId of values.selectedSchedulesIds) {
-                const scheduleWords = await renshuuService.getAllScheduleWords(scheduleId);
-                if (scheduleWords) {
-                    allScheduleWords.push(scheduleWords);
-                }
-            }
-
-            console.log('Form values:', values);
-            console.log('All schedule words:', allScheduleWords);
-
-            if (!userLevelProgress) {
-                throw new Error('User level progress is not available');
-            }
-
-            const prompt = generatePrompt(
-                values.japaneseLevel,
-                userLevelProgress,
-                allScheduleWords,
-                values.conversationTopic,
-                values.includeFurigana,
-                values.includeSuperscript,
-                values.selectedWordsStatus);
-                
-            console.log('Prompt:', prompt);
-        } catch (error) {
-            console.error('Error fetching schedule words:', error);
-            // You might want to add error handling UI here
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
     const japaneseLevelOptions = [
         { value: 'beginner', label: 'Total Beginner' },
         { value: 'n5', label: 'JLPT N5' },
@@ -96,7 +52,7 @@ export function PromptConfigForm() {
     ];
 
     return (
-        <form onSubmit={form.onSubmit(handleSubmit)} style={{ width: '100%', maxWidth: 500, }}>
+        <form onSubmit={form.onSubmit(onSubmit)} style={{ width: '100%', maxWidth: 500, }}>
 
             <Stack style={{ border: '1px solid var(--mantine-color-gray-4)', borderRadius: 'var(--mantine-radius-md)' }}
                 p="md"
