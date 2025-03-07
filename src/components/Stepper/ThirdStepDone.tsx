@@ -7,7 +7,7 @@ import { setStep } from '../../store/slices/stepperSlice';
 export function ThirdStepDone() {
     const dispatch = useDispatch();
 
-    const { fullPrompt } = useSelector((state: RootState) => state.user);
+    const { fullPrompt, gptPrompt } = useSelector((state: RootState) => state.user);
 
 
     return (
@@ -35,7 +35,15 @@ export function ThirdStepDone() {
             >
                 Open GPT
             </Button>
-            <Button variant="subtle" onClick={() => dispatch(setStep(1))}>← Generate another prompt</Button>
+            <Button variant="subtle" onClick={() => dispatch(setStep(1))}>← Generate a new prompt</Button>
+
+            <CopyButton value={gptPrompt || ''}>
+                {({ copied, copy }) => (
+                    <Button variant="transparent" size="xs" onClick={copy}>
+                        {copied ? 'Copied!' : 'Copy this prompt again'}
+                    </Button>
+                )}
+            </CopyButton>
             <>
                 <Divider w="50%" my="md" />
             </>
