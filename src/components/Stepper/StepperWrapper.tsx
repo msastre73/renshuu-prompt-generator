@@ -4,26 +4,26 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../store/store';
 import { SecondStepConfigure } from './SecondStepConfigure';
 import { ThirdStepDone } from './ThirdStepDone';
-import { useEffect } from 'react';
-import { ga } from '../../analytics/ga';
+// import { useEffect } from 'react';
+// import { ga } from '../../analytics/ga';
 
 export function StepperWrapper() {
     const active = useSelector((state: RootState) => state.stepper.activeStep);
 
-    // Track page views when the step changes
-    useEffect(() => {
-        switch (active) {
-            case 0:
-                ga.trackPageView('connect', 'Connect to Renshuu');
-                break;
-            case 1:
-                ga.trackPageView('configure', 'Configure prompt');
-                break;
-            case 3:
-                ga.trackPageView('done', 'Done');
-                break;
-        }
-    }, [active]);
+    // // Track page views when the step changes
+    // useEffect(() => {
+    //     switch (active) {
+    //         case 0:
+    //             ga.trackPageView('connect', 'Connect to Renshuu');
+    //             break;
+    //         case 1:
+    //             ga.trackPageView('configure', 'Configure prompt');
+    //             break;
+    //         case 3:
+    //             ga.trackPageView('done', 'Done');
+    //             break;
+    //     }
+    // }, [active]);
 
     return (
         <>
