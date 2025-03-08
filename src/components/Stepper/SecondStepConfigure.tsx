@@ -10,6 +10,7 @@ import { generatePrompt } from '../../business_logic/generatePrompt';
 import { setGptPrompt, setLastPromptConfig, setVocabListOnly } from '../../store/slices/userSlice';
 import { setFullPrompt } from '../../store/slices/userSlice';
 import { setStep } from '../../store/slices/stepperSlice';
+import { RENSHUU_PROMPT_CONFIG_KEY } from '../../constants';
 
 export function SecondStepConfigure() {
     const { name, kaoPic, userLevel } = useSelector((state: RootState) => state.user);
@@ -20,6 +21,7 @@ export function SecondStepConfigure() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isPromptError, setIsPromptError] = useState(false);
     const userLevelProgress = useSelector((state: RootState) => state.user.levelProgress);
+    const storeDataLocally = useSelector((state: RootState) => state.user.storeDataLocally);
 
     useEffect(() => {
         const loadSchedules = async () => {
@@ -81,6 +83,10 @@ export function SecondStepConfigure() {
             dispatch(setGptPrompt(prompt.gptPrompt));
             dispatch(setVocabListOnly(prompt.vocabListOnly));
             dispatch(setLastPromptConfig(values));
+            // If the user selected to store data locally, store the prompt config in the local storage
+            if(storeDataLocally) {
+                localStorage.setItem(RENSHUU_PROMPT_CONFIG_KEY, JSON.stringify(values));
+            }
             dispatch(setStep(3));
             // Scroll to top
             window.scrollTo(0, 0);

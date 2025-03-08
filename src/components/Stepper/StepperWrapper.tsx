@@ -7,9 +7,6 @@ import { ThirdStepDone } from './ThirdStepDone';
 
 export function StepperWrapper() {
     const active = useSelector((state: RootState) => state.stepper.activeStep);
-
-
-
     return (
         <>
             <Stepper active={active}>

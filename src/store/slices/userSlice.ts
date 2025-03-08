@@ -23,6 +23,14 @@ interface UserState {
     fullPrompt: string | null;
     gptPrompt: string | null;
     vocabListOnly: string | null;
+    storeDataLocally: boolean;
+}
+
+export type UserProfileData = {
+    name: string;
+    kaoPic: string;
+    userLevel: number;
+    levelProgress: LevelProgress;
 }
 
 const initialState: UserState = {
@@ -34,6 +42,7 @@ const initialState: UserState = {
     fullPrompt: null,
     gptPrompt: null,
     vocabListOnly: null,
+    storeDataLocally: false,
 };
 
 export const userSlice = createSlice({
@@ -72,6 +81,10 @@ export const userSlice = createSlice({
             state.fullPrompt = null;
             state.gptPrompt = null;
             state.vocabListOnly = null;
+            state.storeDataLocally = false;
+        },
+        setStoreDataLocally: (state, action: PayloadAction<boolean>) => {
+            state.storeDataLocally = action.payload;
         },
     },
 });
@@ -82,7 +95,8 @@ export const {
     setFullPrompt,
     setGptPrompt,
     setVocabListOnly,
-    clearUserData 
+    clearUserData,
+    setStoreDataLocally,
 } = userSlice.actions;
 
 export default userSlice.reducer; 

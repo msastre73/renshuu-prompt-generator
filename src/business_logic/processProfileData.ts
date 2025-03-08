@@ -1,9 +1,10 @@
 import { store } from '../store/store';
-import { JLPTLevel, LevelProgress, setUserData } from '../store/slices/userSlice';
+import { JLPTLevel, LevelProgress, setStoreDataLocally, setUserData } from '../store/slices/userSlice';
 import { setToken } from '../store/slices/tokenSlice';
 import { setStep } from '../store/slices/stepperSlice';
+import { RENSHUU_TOKEN_KEY } from '../constants';
 
-export default function processProfileData(profile: any, token: string) {
+export default function processProfileData(profile: any, token: string, storeDataLocally: boolean) {
     const levels = ['N5', 'N4', 'N3', 'N2', 'N1'];
     const levelProgress = levels.reduce((acc, level) => {
         acc[level as JLPTLevel] = {
@@ -16,6 +17,11 @@ export default function processProfileData(profile: any, token: string) {
     }, {} as LevelProgress);
 
     // Set user data with correct mapping
+    if(storeDataLocally) {
+        store.dispatch(setStoreDataLocally(true));
+        // Store the token in the local storage
+        localStorage.setItem(RENSHUU_TOKEN_KEY, token);
+    }
     store.dispatch(setUserData({
         name: profile.real_name,
         kaoPic: profile.kao,

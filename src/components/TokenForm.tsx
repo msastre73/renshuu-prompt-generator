@@ -1,17 +1,22 @@
 import { Button, Stack, Text, PasswordInput, Checkbox, Modal, Anchor } from '@mantine/core';
 import { useForm } from '@mantine/form';
 
-import { renshuuService } from '../services/renshuuService';
-import { useState } from 'react';
-import processProfileData from '../business_logic/processProfileData';
-interface TokenFormValues {
+import { useEffect, useState } from 'react';
+
+export interface TokenFormValues {
   token: string;
   rememberToken: boolean;
 }
 
-export function TokenForm() {
+interface TokenFormProps {
+  onSubmit: (values: TokenFormValues) => Promise<void>;
+  isConnecting: boolean;
+  tokenError: boolean;
+  resentTokenError: () => void;
+}
+
+export function TokenForm({ onSubmit, isConnecting, tokenError, resentTokenError  }: TokenFormProps) {
   const [termsModalOpen, setTermsModalOpen] = useState(false);
-  const [connecting, setConnecting] = useState(false);
 
   const form = useForm<TokenFormValues>({
     initialValues: {
@@ -23,18 +28,16 @@ export function TokenForm() {
     },
   });
 
-  const handleSubmit = async (values: TokenFormValues) => {
-    setConnecting(true);
-    const profile = await renshuuService.getProfile(values.token);
-    console.log(profile);
-
-    if (profile) {
-      // process the user profile and token
-      processProfileData(profile, values.token);
-    } else {
+  useEffect(() => {
+    if (tokenError) {
       form.setFieldError('token', 'Invalid API Key');
     }
-    setConnecting(false);
+  }, [tokenError]);
+
+  // Handle form submit
+  const handleSubmit = (values: TokenFormValues) => {
+    resentTokenError();
+    onSubmit(values);
   };
 
   return (
@@ -83,7 +86,7 @@ export function TokenForm() {
             }
             {...form.getInputProps('rememberToken', { type: 'checkbox' })}
           />
-          <Button type="submit" loading={connecting}>Connect</Button>
+          <Button type="submit" loading={isConnecting}>Connect</Button>
           <Text size="sm" c="red">
             ⚠️ NEVER include your API key directly on posts, emails, Discord messages, etc. Treat it like a password!
           </Text>
