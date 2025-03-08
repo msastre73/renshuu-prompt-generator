@@ -129,14 +129,21 @@ export interface RenshuuProfile {
 }
 
 interface ScheduleTerm {
-    kanji_full: string;
-    hiragana_full: string;
+    kanji_full?: string;
+    kanji?: string;
+    hiragana_full?: string;
+    hiragana?: string;
     id: string;
+    meaning?: {
+        eng: string;
+    };
+    title_japanese?: string;
     user_data?: {
         mastery_avg_perc: number;
         correct_count: number;
         missed_count: number;
     };
+    japanese?: string;
 }
 
 interface ScheduleListResponse {
@@ -236,12 +243,30 @@ export const renshuuService = {
                 allTerms = [...allTerms, ...response.data.contents.terms];
             }
 
+            // Workaround for when the schedule has grammar terms
+            const processKanji = (term: ScheduleTerm) => {
+                if (term.kanji_full) {
+                    return term.kanji_full;
+                }
+                if (term.kanji) {
+                    return `${term.kanji}(kanji)`;
+                }
+                if (term.title_japanese && term.meaning?.eng) {
+                    return `${term.title_japanese} (${term.meaning.eng})`;
+                } if(term.japanese){
+                    return `${term.japanese}(sentence)`;
+                }
+                else{
+                    return '';
+                }
+            }
+
             // Group terms by studied status
             const studiedWords = allTerms
                 .filter(term => term.user_data)
                 .map(term => ({
-                    kanji: term.kanji_full,
-                    reading: term.hiragana_full,
+                    kanji: processKanji(term),
+                    reading: term.hiragana_full || '',
                     id: term.id,
                     mastery: term.user_data!.mastery_avg_perc,
                     encountered_count: term.user_data!.correct_count + term.user_data!.missed_count
@@ -250,8 +275,8 @@ export const renshuuService = {
             const notStudiedWords = allTerms
                 .filter(term => !term.user_data)
                 .map(term => ({
-                    kanji: term.kanji_full,
-                    reading: term.hiragana_full,
+                    kanji: processKanji(term),
+                    reading: term.hiragana_full || '',
                     id: term.id
                 }));
 

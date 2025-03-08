@@ -8,10 +8,10 @@ export default function processProfileData(profile: any, token: string, storeDat
     const levels = ['N5', 'N4', 'N3', 'N2', 'N1'];
     const levelProgress = levels.reduce((acc, level) => {
         acc[level as JLPTLevel] = {
-            kanji: profile.level_progress_percs.kanji[level.toLowerCase()],
-            sentences: profile.level_progress_percs.sent[level.toLowerCase()],
-            vocabulary: profile.level_progress_percs.vocab[level.toLowerCase()],
-            grammar: profile.level_progress_percs.grammar[level.toLowerCase()],
+            kanji: profile?.level_progress_percs?.kanji?.[level.toLowerCase()] ?? 0,
+            sentences: profile?.level_progress_percs?.sent?.[level.toLowerCase()] ?? 0,
+            vocabulary: profile?.level_progress_percs?.vocab?.[level.toLowerCase()] ?? 0,
+            grammar: profile?.level_progress_percs?.grammar?.[level.toLowerCase()] ?? 0,
         };
         return acc;
     }, {} as LevelProgress);
