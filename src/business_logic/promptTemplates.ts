@@ -99,7 +99,18 @@ const gptPrompt = `
 > Conversation Topic: {{topic}}
 
 `
+const vocabListOnly = `
+Below you can find the list of terms (words, sentences, kanji, etc.) the user wants to practice in this conversation (you can use other words of course, to be able to have a conversation).
+They are organized by "schedule" (the term Renshuu uses to organize the terms) and by studied status (studied or not studied).
+Each word will be separated by a "|" character, and after each of the studied ones there will be double brackets with two pieces of information about the user's knowledge of each word.
+* The number of times they've studied this word in Renshuu
+* The "mastery" of this word, which is a % representing how well they know it (from 0% to 100% where 0% means they really struggle with it and 100% means they know it perfectly).
+This information is just for context, so you can mix it up, sometimes using words they know well and sometimes using words they don't know well (again among other necessary words not included in the list but necessary for the conversation).
 
+== LIST OF TERMS ==
+{{terms}}
+===================
+`
 
 export const promptTemplates = {
     master,
@@ -109,6 +120,7 @@ export const promptTemplates = {
     superscriptFuriganaExample,
     topicDefault,
     topicDefined,
-    gptPrompt
+    gptPrompt,
+    vocabListOnly
 }
 

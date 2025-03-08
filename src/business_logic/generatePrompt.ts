@@ -102,9 +102,14 @@ export function generatePrompt(
         topic: conversationTopic == "" ? promptTemplates.topicDefault : conversationTopic
     })
 
+    const vocabListOnly = formatTemplate(promptTemplates.vocabListOnly, {
+        terms: termsPart
+    })
+
     return {
         fullPrompt: prompt,
-        gptPrompt: gptPrompt
+        gptPrompt: gptPrompt,
+        vocabListOnly: vocabListOnly
     };
 
 }

@@ -7,7 +7,7 @@ import { setStep } from '../../store/slices/stepperSlice';
 export function ThirdStepDone() {
     const dispatch = useDispatch();
 
-    const { fullPrompt, gptPrompt } = useSelector((state: RootState) => state.user);
+    const { fullPrompt, gptPrompt, vocabListOnly } = useSelector((state: RootState) => state.user);
 
 
     return (
@@ -66,6 +66,28 @@ export function ThirdStepDone() {
                 </Group>
                 <Spoiler maxHeight={100} showLabel="Show more" hideLabel="Hide">
                     <Code block>{fullPrompt}</Code>
+                </Spoiler>
+            </Stack>
+
+            <Text size="sm" c="dimmed" mt="md" ta="center">
+                Below is the list of terms you have selected, with information about how many times{" "}
+                you have studied them and your mastery of them. If you want to craft your own prompt, this can come handy.
+            </Text>
+
+            {/* Full Prompt Spoiler */}
+            <Stack w="100%" gap="xs">
+                <Group justify="space-between">
+                    <Text size="sm" fw={500} c="dimmed">Vocabulary List (with mastery info)</Text>
+                    <CopyButton value={vocabListOnly || ''}>
+                        {({ copied, copy }) => (
+                            <Button variant="light" size="xs" onClick={copy}>
+                                {copied ? 'Copied!' : 'Copy'}
+                            </Button>
+                        )}
+                    </CopyButton>
+                </Group>
+                <Spoiler maxHeight={100} showLabel="Show more" hideLabel="Hide">
+                    <Code block>{vocabListOnly}</Code>
                 </Spoiler>
             </Stack>
         </Stack>

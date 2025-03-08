@@ -22,6 +22,7 @@ interface UserState {
     lastPromptConfig: PromptConfig | null;
     fullPrompt: string | null;
     gptPrompt: string | null;
+    vocabListOnly: string | null;
 }
 
 const initialState: UserState = {
@@ -32,6 +33,7 @@ const initialState: UserState = {
     lastPromptConfig: null,
     fullPrompt: null,
     gptPrompt: null,
+    vocabListOnly: null,
 };
 
 export const userSlice = createSlice({
@@ -58,6 +60,9 @@ export const userSlice = createSlice({
         setGptPrompt: (state, action: PayloadAction<string>) => {
             state.gptPrompt = action.payload;
         },
+        setVocabListOnly: (state, action: PayloadAction<string>) => {
+            state.vocabListOnly = action.payload;
+        },
         clearUserData: (state) => {
             state.name = null;
             state.kaoPic = null;
@@ -66,6 +71,7 @@ export const userSlice = createSlice({
             state.lastPromptConfig = null;
             state.fullPrompt = null;
             state.gptPrompt = null;
+            state.vocabListOnly = null;
         },
     },
 });
@@ -75,6 +81,7 @@ export const {
     setLastPromptConfig, 
     setFullPrompt,
     setGptPrompt,
+    setVocabListOnly,
     clearUserData 
 } = userSlice.actions;
 

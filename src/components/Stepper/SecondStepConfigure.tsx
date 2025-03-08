@@ -7,7 +7,7 @@ import { renshuuService, ProcessedSchedule } from '../../services/renshuuService
 import { selectSchedules, setSchedules, ScheduleInfo } from '../../store/slices/schedulesSlice';
 import { PromptConfig, PromptConfigForm } from '../PromptConfigForm';
 import { generatePrompt } from '../../business_logic/generatePrompt';
-import { setGptPrompt, setLastPromptConfig } from '../../store/slices/userSlice';
+import { setGptPrompt, setLastPromptConfig, setVocabListOnly } from '../../store/slices/userSlice';
 import { setFullPrompt } from '../../store/slices/userSlice';
 import { setStep } from '../../store/slices/stepperSlice';
 
@@ -79,6 +79,7 @@ export function SecondStepConfigure() {
             navigator.clipboard.writeText(prompt.gptPrompt || '');
             dispatch(setFullPrompt(prompt.fullPrompt));
             dispatch(setGptPrompt(prompt.gptPrompt));
+            dispatch(setVocabListOnly(prompt.vocabListOnly));
             dispatch(setLastPromptConfig(values));
             dispatch(setStep(3));
             // Scroll to top
