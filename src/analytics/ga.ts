@@ -14,12 +14,20 @@ declare global {
 }
 
 
-const trackGPTFunnel = (action: string) => {
+const trackGPTFunnel = (action: string, isTestMode: boolean = false) => {
   if (typeof window !== "undefined" && window.gtag) {
     const token = store.getState().token.value;
+    
+    let isTestModeChecked = false;
+    if(isTestMode) {
+      isTestModeChecked = true; // If provided, use the provided value
+    } else {
+      isTestModeChecked = token == TEST_MODE_TOKEN;
+    }
+
     window.gtag("event", "gpt_funnel", {
       action,
-      is_test_mode: token == TEST_MODE_TOKEN,
+      is_test_mode: isTestModeChecked,
     });
   }
 };

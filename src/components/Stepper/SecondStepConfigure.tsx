@@ -27,7 +27,6 @@ export function SecondStepConfigure() {
     useEffect(() => {
         const loadSchedules = async () => {
             setIsLoadingSchedules(true);
-            console.log('Loading schedules...');
             const response = await renshuuService.getAllSchedules();
             if (response?.schedules) {
                 const transformedSchedules: ScheduleInfo[] = response.schedules.map(schedule => ({
@@ -40,7 +39,6 @@ export function SecondStepConfigure() {
                     }
                 }));
                 dispatch(setSchedules(transformedSchedules));
-                console.log(transformedSchedules);
             } else {
                 setSchedulesError('Failed to load schedules');
             }

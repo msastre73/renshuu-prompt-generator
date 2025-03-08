@@ -12,6 +12,7 @@ import { renshuuService } from "./services/renshuuService";
 import processProfileData from "./business_logic/processProfileData";
 import { clearAllUserDataAndState, setLastPromptConfig, setStoreDataLocally } from "./store/slices/userSlice";
 import { IconLogout2, IconBrandGithub } from "@tabler/icons-react";
+import { ga } from "./analytics/ga";
 export default function App() {
   const dispatch = useDispatch();
   const step = useSelector((state: RootState) => state.stepper.activeStep);
@@ -75,7 +76,7 @@ export default function App() {
                   fine-tuned for this use case which performs better and needs less input.
                 </Text>
               </Stack>}
-              {token &&<Button mb="md"
+              {token && <Button mb="md"
                 leftSection={<IconLogout2 />}
                 color="gray.5"
                 variant="subtle"
@@ -84,7 +85,16 @@ export default function App() {
               </Button>}
               <StepperWrapper />
             </Paper>
-            <Text size="xs"  c="dimmed">Made with ❤️ by <Anchor href="https://www.linkedin.com/in/msastre73/" target="_blank">Marcos Sastre</Anchor> using <Anchor href="https://mantine.dev/" target="_blank">Mantine UI</Anchor> | <Anchor href="https://github.com/msastre73/renshuu-prompt-generator" target="_blank"> Github repo <IconBrandGithub size={10} /></Anchor></Text>
+            <Text size="xs" c="dimmed">Made with ❤️ by{" "}
+              <Anchor
+                onClick={() => ga.trackContactLink('linkedin')} href="https://www.linkedin.com/in/msastre73/"
+                target="_blank">Marcos Sastre</Anchor>{" "}
+              using <Anchor href="https://mantine.dev/" target="_blank">Mantine UI</Anchor> |{" "}
+              <Anchor
+                onClick={() => ga.trackContactLink('github')}
+                href="https://github.com/msastre73/renshuu-prompt-generator"
+                target="_blank">
+                Github repo <IconBrandGithub size={10} /></Anchor></Text>
 
           </Stack>
         ) : (

@@ -185,7 +185,6 @@ export interface ProcessedSchedule {
 export const renshuuService = {
     // Get user profile
     getProfile: async (token?: string): Promise<RenshuuProfile | null> => {
-        console.log("Getting profile with token:", token);
         try {
             const headers = token ? { Authorization: `Bearer ${token}` } : undefined;
             const response = await api.get<RenshuuProfile>('/profile', { headers });
@@ -221,10 +220,7 @@ export const renshuuService = {
                     params: { pg: 1 }
                 }
             );
-
-            console.log('First response:', firstResponse.data);
-
-            
+           
             scheduleName = firstResponse.data.schedules[0].name; // ?? Will it always be the first schedule?
             const totalPages = firstResponse.data.contents.total_pg;
             allTerms = [...firstResponse.data.contents.terms];
@@ -239,7 +235,6 @@ export const renshuuService = {
                         params: { pg: currentPage }
                     }
                 );
-                console.log('Response of page ', currentPage, ':', response.data);
                 allTerms = [...allTerms, ...response.data.contents.terms];
             }
 

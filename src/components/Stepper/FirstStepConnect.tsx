@@ -6,6 +6,7 @@ import { renshuuService } from '../../services/renshuuService';
 import processProfileData from '../../business_logic/processProfileData';
 import type { TokenFormValues } from '../TokenForm';
 import { ga } from '../../analytics/ga';
+import { TEST_MODE_TOKEN } from '../../constants';
 
 
 export function FirstStepConnect() {
@@ -16,10 +17,9 @@ export function FirstStepConnect() {
     const handleSubmit = async (values: TokenFormValues) => {
         setConnecting(true);
         const profile = await renshuuService.getProfile(values.token);
-        console.log(profile);
 
         if (profile) {
-            ga.trackGPTFunnel('connected');
+            ga.trackGPTFunnel('connected', values.token == TEST_MODE_TOKEN);
             processProfileData(profile, values.token, values.rememberToken);
         } else {
             setTokenError(true);

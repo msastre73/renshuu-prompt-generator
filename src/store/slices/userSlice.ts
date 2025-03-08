@@ -105,7 +105,6 @@ export const {
 } = userSlice.actions;
 
 export const clearAllUserDataAndState = (dispatch: AppDispatch) => {
-    console.log('Clearing all data');
     dispatch(clearToken());
     localStorage.removeItem(RENSHUU_TOKEN_KEY);
     dispatch(clearSchedules());

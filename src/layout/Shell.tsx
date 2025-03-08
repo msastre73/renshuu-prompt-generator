@@ -15,7 +15,6 @@ export function Shell({ children }: ShellProps) {
   const token = useSelector((state: RootState) => state.token.value);
 
   const handleExitTestMode = () => {
-    console.log('Clearing all data link clicked');
     clearAllUserDataAndState(dispatch);
   };
 

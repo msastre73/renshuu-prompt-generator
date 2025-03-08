@@ -22,7 +22,15 @@ export function ThirdStepDone() {
                 For the best experience, I've created a GPT fine-tuned for this. Open it and paste the prompt (it's already copied to your clipboard!)
             </Text>
             <Text ta="center">
-                If you have any issues or feedback please contact me via  <Anchor href="https://discord.gg/8sewDJUAs9" target="_blank"><IconBrandDiscord size={14} />Discord</Anchor> or  <Anchor href="mailto:marcossastre73@gmail.com"><IconMail size={14} />email</Anchor>.
+                If you have any issues or feedback please contact me via{" "}
+                <Anchor
+                    onClick={() => ga.trackContactLink('discord')}
+                    href="https://discord.gg/8sewDJUAs9" target="_blank">
+                    <IconBrandDiscord size={14} />Discord</Anchor> or{" "}
+                <Anchor
+                    onClick={() => ga.trackContactLink('email')}
+                    href="mailto:marcossastre73@gmail.com">
+                    <IconMail size={14} />email</Anchor>.
             </Text>
 
             <Button
@@ -49,7 +57,7 @@ export function ThirdStepDone() {
                             ga.trackGPTFunnel('gpt_prompt_copied');
                             copy();
 
-                    }}>
+                        }}>
                         {copied ? 'Copied!' : 'Copy this prompt again'}
                     </Button>
                 )}
