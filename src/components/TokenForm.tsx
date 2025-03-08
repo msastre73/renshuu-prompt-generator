@@ -79,9 +79,16 @@ export function TokenForm({ onSubmit, isConnecting, tokenError, resentTokenError
             label={
               <Text span size="sm">
                 Remember my API Key on this device. I agree to the{' '}
-                <Text span c="blue" style={{ cursor: 'pointer' }} onClick={() => setTermsModalOpen(true)}>
-                  Terms and Conditions.
-                </Text>
+                <Anchor
+                  component="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setTermsModalOpen(true);
+                  }}
+                >
+                  Terms and Conditions
+                </Anchor>
               </Text>
             }
             {...form.getInputProps('rememberToken', { type: 'checkbox' })}
