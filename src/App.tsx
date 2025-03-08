@@ -1,5 +1,5 @@
 import "@mantine/core/styles.css";
-import { Anchor, MantineProvider, Paper, Stack, Text, Title } from "@mantine/core";
+import { Anchor, Button, MantineProvider, Paper, Stack, Text, Title, Image } from "@mantine/core";
 import { theme } from "./theme";
 import { Shell } from "./layout/Shell";
 import { StepperWrapper } from "./components/Stepper/StepperWrapper";
@@ -10,12 +10,15 @@ import { useEffect, useState } from "react";
 import { RENSHUU_TOKEN_KEY, RENSHUU_PROMPT_CONFIG_KEY } from "./constants";
 import { renshuuService } from "./services/renshuuService";
 import processProfileData from "./business_logic/processProfileData";
-import { setLastPromptConfig, setStoreDataLocally } from "./store/slices/userSlice";
+import { clearAllUserDataAndState, setLastPromptConfig, setStoreDataLocally } from "./store/slices/userSlice";
+import { IconLogout2, IconBrandGithub } from "@tabler/icons-react";
 export default function App() {
   const dispatch = useDispatch();
   const step = useSelector((state: RootState) => state.stepper.activeStep);
+  const token = useSelector((state: RootState) => state.token.value);
   const [appInitialized, setAppInitialized] = useState(false);
   const [appLoading, setAppLoading] = useState(false);
+
 
   useEffect(() => {
 
@@ -49,8 +52,17 @@ export default function App() {
         {appInitialized ? (
           <Stack align="center">
             <Paper shadow="xs" p="xl" w="100%" maw={800}>
+
               {step === 0 && <Stack gap="xs" mb="xl">
-                <Title order={2}> ようこそ! / Welcome!</Title>
+                <Image
+                  src="/android-chrome-512x512.png"
+                  alt="Renshuu Prompt Generator Logo"
+                  w={80}
+                  h={80}
+                  style={{ alignSelf: 'center', borderRadius: '10px' }}
+                />
+                <Title order={3} ta="center"> ようこそ! </Title>
+                <Title order={2}> Welcome to the Renshuu Prompt Generator!</Title>
                 <Text>
                   This is a tiny utility app that connects to your Reinshuu account and generates{' '}
                   prompts based on your selected schedules, for practicing conversation with LLM chats, like{' '}
@@ -59,12 +71,21 @@ export default function App() {
                   <Anchor target="_blank" href="https://gemini.google.com">Gemini</Anchor>, etc.
                 </Text>
                 <Text>
-                  The full prompt not always works as expected, so I've created a GPT{' '}
+                  The full prompt does not always works as expected, so I've created a GPT{' '}
                   fine-tuned for this use case which performs better and needs less input.
                 </Text>
               </Stack>}
+              {token &&<Button mb="md"
+                leftSection={<IconLogout2 />}
+                color="gray.5"
+                variant="subtle"
+                onClick={() => clearAllUserDataAndState(dispatch)}>
+                Log Out
+              </Button>}
               <StepperWrapper />
             </Paper>
+            <Text size="xs"  c="dimmed">Made with ❤️ by <Anchor href="https://www.linkedin.com/in/msastre73/" target="_blank">Marcos Sastre</Anchor> using <Anchor href="https://mantine.dev/" target="_blank">Mantine UI</Anchor> | <Anchor href="https://github.com/msastre73/renshuu-prompt-generator" target="_blank"> Github repo <IconBrandGithub size={10} /></Anchor></Text>
+
           </Stack>
         ) : (
           <Stack align="center">

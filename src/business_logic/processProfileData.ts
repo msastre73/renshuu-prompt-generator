@@ -29,5 +29,7 @@ export default function processProfileData(profile: any, token: string, storeDat
         levelProgress,
     }));
     store.dispatch(setToken(token));
+    // Smooth scroll to the top of the page
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     store.dispatch(setStep(1));
 }

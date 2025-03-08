@@ -1,27 +1,29 @@
 import { Alert, Anchor, AppShell,  Stack, } from '@mantine/core';
 import { useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { RootState } from '../store/store';
 import { TEST_MODE_TOKEN } from '../constants';
 import { IconInfoCircle } from '@tabler/icons-react';
+import { clearAllUserDataAndState } from '../store/slices/userSlice';
+
 interface ShellProps {
   children: React.ReactNode;
 }
 
 export function Shell({ children }: ShellProps) {
-
+  const dispatch = useDispatch();
   const token = useSelector((state: RootState) => state.token.value);
+
+  const handleExitTestMode = () => {
+    console.log('Clearing all data link clicked');
+    clearAllUserDataAndState(dispatch);
+  };
+
   return (
     <AppShell
       header={{ height: 0 }}
       padding="md"
     >
-      {/* <AppShell.Header>
-        <Group h="100%" px="md" justify="space-between">
-          <Title order={2}>App Name</Title>
-          <Button>Action</Button>
-        </Group>
-      </AppShell.Header> */}
-
       <AppShell.Main bg="gray.0">
         <Stack >
           {token && token === TEST_MODE_TOKEN && (
@@ -32,7 +34,7 @@ export function Shell({ children }: ShellProps) {
                 color="yellow"
                 title="Test mode"
                 icon={<IconInfoCircle />}>
-                You are in TEST mode. <Anchor>Exit test mode</Anchor> to connect to your Renshuu account.
+                You are in TEST mode. <Anchor onClick={handleExitTestMode}  >Exit test mode</Anchor> to connect to your Renshuu account.
               </Alert>
             </Stack>
           )}

@@ -1,8 +1,13 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { PromptConfig } from '../../components/PromptConfigForm';
+import { RENSHUU_TOKEN_KEY, RENSHUU_PROMPT_CONFIG_KEY } from '../../constants';
+import { clearToken } from './tokenSlice';
+import { clearSchedules } from './schedulesSlice';
+import { resetStepper } from './stepperSlice';
+import { AppDispatch } from '../store';
+
+
 export type JLPTLevel = 'N1' | 'N2' | 'N3' | 'N4' | 'N5';
-
-
 
 export type Category = 'kanji' | 'sentences' | 'vocabulary' | 'grammar';
 
@@ -98,5 +103,15 @@ export const {
     clearUserData,
     setStoreDataLocally,
 } = userSlice.actions;
+
+export const clearAllUserDataAndState = (dispatch: AppDispatch) => {
+    console.log('Clearing all data');
+    dispatch(clearToken());
+    localStorage.removeItem(RENSHUU_TOKEN_KEY);
+    dispatch(clearSchedules());
+    dispatch(clearUserData());
+    localStorage.removeItem(RENSHUU_PROMPT_CONFIG_KEY);
+    dispatch(resetStepper());
+};
 
 export default userSlice.reducer; 

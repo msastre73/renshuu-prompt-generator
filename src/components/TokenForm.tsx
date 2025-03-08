@@ -1,7 +1,9 @@
-import { Button, Stack, Text, PasswordInput, Checkbox, Modal, Anchor } from '@mantine/core';
+import { Button, Stack, Text, PasswordInput, Checkbox, Modal, Anchor, Flex } from '@mantine/core';
 import { useForm } from '@mantine/form';
 
 import { useEffect, useState } from 'react';
+import { TEST_MODE_TOKEN } from '../constants';
+import { IconInfoCircle } from '@tabler/icons-react';
 
 export interface TokenFormValues {
   token: string;
@@ -15,12 +17,16 @@ interface TokenFormProps {
   resentTokenError: () => void;
 }
 
-export function TokenForm({ onSubmit, isConnecting, tokenError, resentTokenError  }: TokenFormProps) {
+export function TokenForm({ onSubmit, isConnecting, tokenError, resentTokenError }: TokenFormProps) {
   const [termsModalOpen, setTermsModalOpen] = useState(false);
+
+  // Add URL parameter check
+  const searchParams = new URLSearchParams(window.location.search);
+  const isTestMode = searchParams.get('testMode') === 'true';
 
   const form = useForm<TokenFormValues>({
     initialValues: {
-      token: '',
+      token: isTestMode ? TEST_MODE_TOKEN : '',
       rememberToken: true,
     },
     validate: {
@@ -75,6 +81,17 @@ export function TokenForm({ onSubmit, isConnecting, tokenError, resentTokenError
             placeholder="Enter your API key"
             {...form.getInputProps('token')}
           />
+          {form.values.token === TEST_MODE_TOKEN ?
+            <Flex bg="yellow.1" p={5} style={{ borderRadius: 4 }} justify="left" align="start" gap={4}>
+              <IconInfoCircle size={16} />
+              <Text size="xs" c="gray.7">
+                You are using the <Text span fw={500}> API key of the test user</Text> (which is perfect if you are just testing the app).
+              </Text>
+            </Flex>
+            :
+            <Anchor size="xs" ta="right" onClick={() => form.setFieldValue('token', TEST_MODE_TOKEN)}>Use test API key</Anchor>
+
+          }
           <Checkbox
             label={
               <Text span size="sm">
