@@ -11,6 +11,7 @@ import { setGptPrompt, setLastPromptConfig, setVocabListOnly } from '../../store
 import { setFullPrompt } from '../../store/slices/userSlice';
 import { setStep } from '../../store/slices/stepperSlice';
 import { RENSHUU_PROMPT_CONFIG_KEY } from '../../constants';
+import { ga } from '../../analytics/ga';
 
 export function SecondStepConfigure() {
     const { name, kaoPic, userLevel } = useSelector((state: RootState) => state.user);
@@ -77,6 +78,7 @@ export function SecondStepConfigure() {
                 values.includeSuperscript,
                 values.selectedWordsStatus
             );
+            ga.trackGPTFunnel('prompt_generated');
             // Copy gpt prompt to clipboard
             navigator.clipboard.writeText(prompt.gptPrompt || '');
             dispatch(setFullPrompt(prompt.fullPrompt));

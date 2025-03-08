@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { renshuuService } from '../../services/renshuuService';
 import processProfileData from '../../business_logic/processProfileData';
 import type { TokenFormValues } from '../TokenForm';
+import { ga } from '../../analytics/ga';
 
 
 export function FirstStepConnect() {
@@ -18,6 +19,7 @@ export function FirstStepConnect() {
         console.log(profile);
 
         if (profile) {
+            ga.trackGPTFunnel('connected');
             processProfileData(profile, values.token, values.rememberToken);
         } else {
             setTokenError(true);

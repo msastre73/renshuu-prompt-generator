@@ -3,6 +3,7 @@ import { IconCheck, IconBrandOpenai, IconBrandDiscord, IconMail } from '@tabler/
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../store/store';
 import { setStep } from '../../store/slices/stepperSlice';
+import { ga } from '../../analytics/ga';
 
 export function ThirdStepDone() {
     const dispatch = useDispatch();
@@ -27,6 +28,7 @@ export function ThirdStepDone() {
             <Button
                 component="a"
                 href="https://chatgpt.com/g/g-67cadd09de188191a45150dda040bff7-practice-japanese-with-your-renshuu-vocab"
+                onClick={() => ga.trackGPTFunnel('external_gpt_opened')}
                 target="_blank"
                 leftSection={<IconBrandOpenai size={20} />}
                 size="lg"
@@ -35,11 +37,19 @@ export function ThirdStepDone() {
             >
                 Open GPT
             </Button>
-            <Button variant="subtle" onClick={() => dispatch(setStep(1))}>← Generate a new prompt</Button>
+            <Button variant="subtle" onClick={() => {
+                ga.trackGPTFunnel('new_prompt_started');
+                dispatch(setStep(1))
+            }}>← Generate a new prompt</Button>
 
             <CopyButton value={gptPrompt || ''}>
                 {({ copied, copy }) => (
-                    <Button variant="transparent" size="xs" onClick={copy}>
+                    <Button variant="transparent" size="xs" onClick={
+                        () => {
+                            ga.trackGPTFunnel('gpt_prompt_copied');
+                            copy();
+
+                    }}>
                         {copied ? 'Copied!' : 'Copy this prompt again'}
                     </Button>
                 )}
@@ -58,7 +68,12 @@ export function ThirdStepDone() {
                     <Text size="sm" fw={500} c="dimmed">Full Prompt (for any LLM chat)</Text>
                     <CopyButton value={fullPrompt || ''}>
                         {({ copied, copy }) => (
-                            <Button variant="light" size="xs" onClick={copy}>
+                            <Button variant="light" size="xs" onClick={
+                                () => {
+                                    ga.trackGPTFunnel('full_prompt_copied');
+                                    copy();
+
+                                }}>
                                 {copied ? 'Copied!' : 'Copy'}
                             </Button>
                         )}
@@ -80,7 +95,12 @@ export function ThirdStepDone() {
                     <Text size="sm" fw={500} c="dimmed">Vocabulary List (with mastery info)</Text>
                     <CopyButton value={vocabListOnly || ''}>
                         {({ copied, copy }) => (
-                            <Button variant="light" size="xs" onClick={copy}>
+                            <Button variant="light" size="xs" onClick={
+                                () => {
+                                    ga.trackGPTFunnel('vocab_list_copied');
+                                    copy();
+
+                                }}>
                                 {copied ? 'Copied!' : 'Copy'}
                             </Button>
                         )}

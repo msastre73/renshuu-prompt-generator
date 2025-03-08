@@ -10,21 +10,6 @@ import { ThirdStepDone } from './ThirdStepDone';
 export function StepperWrapper() {
     const active = useSelector((state: RootState) => state.stepper.activeStep);
 
-    // // Track page views when the step changes
-    // useEffect(() => {
-    //     switch (active) {
-    //         case 0:
-    //             ga.trackPageView('connect', 'Connect to Renshuu');
-    //             break;
-    //         case 1:
-    //             ga.trackPageView('configure', 'Configure prompt');
-    //             break;
-    //         case 3:
-    //             ga.trackPageView('done', 'Done');
-    //             break;
-    //     }
-    // }, [active]);
-
     return (
         <>
             <Stepper active={active}>
