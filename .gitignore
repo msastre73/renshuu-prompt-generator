@@ -130,3 +130,6 @@ dist
 .pnp.*
 
 .DS_Store
+
+# Firebase cache & auth-related files (DO NOT COMMIT)
+.firebase/
