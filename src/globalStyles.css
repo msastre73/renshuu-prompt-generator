@@ -1,3 +1,7 @@
 .kao-avatar img{
     object-fit: contain;
 }
+
+.test-mode-alert .mantine-Alert-body{
+    gap: 0;
+}
